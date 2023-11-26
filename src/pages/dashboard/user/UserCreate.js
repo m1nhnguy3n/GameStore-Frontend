@@ -21,13 +21,15 @@ export default function UserCreate() {
 
   const { pathname } = useLocation();
 
-  const { userId = '' } = useParams();
+  const { userId = ''} = useParams();
 
   const isEdit = pathname.includes('edit');
 
   const { users } = useSelector((state) => state.user);
 
-  const currentUser = users.find((user) => user.id === userId);
+  const currentUser = users.find((user) => user.id === Number(userId));
+
+  console.log(userId);
 
   return (
     <Page title="User: Create a new user">

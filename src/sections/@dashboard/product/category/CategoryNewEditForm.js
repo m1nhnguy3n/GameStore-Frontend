@@ -12,9 +12,8 @@ import { Card, Stack } from '@mui/material';
 // components
 import { FormProvider, RHFTextField } from '../../../../components/hook-form';
 
-// axios
-import axios from '../../../../utils/axios';
-
+// api 
+import { addCategoryApi, editCategoryApi } from '../../../../api/category';
 // ----------------------------------------------------------------------
 
 CategoryNewEditForm.propTypes = {
@@ -61,21 +60,27 @@ export default function CategoryNewEditForm({ isEdit, category }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, category]);
-  const addCategory = async (data) => {
-    const response = await axios.post('/category', { ...data }).then((response) => {
-      enqueueSnackbar('Update success!' || response.statusText);
+  const addCategory = async (category) => {
+ await addCategoryApi(category).then((response) => {
+      enqueueSnackbar('Create success!' || response.statusText);
     });
     
   };
 
-  const editCategory = async (data) => {
-    const response = await axios.put('/category', { ...data });
-    enqueueSnackbar('Update success!' || response.statusText);
-
+  const editCategory = async (category) => {
+    await editCategoryApi(category).then((response) => {
+     enqueueSnackbar('Update success!' || response.statusText);
+   });
+    
+  };
 
     const onSubmit = async (data) => {
       try {
+        if (!isEdit) {
         addCategory(data);
+        } else {
+          editCategory(data);
+        }
         reset();
       } catch (error) {
         console.error(error);
@@ -95,5 +100,5 @@ export default function CategoryNewEditForm({ isEdit, category }) {
         </FormProvider>
       </Card>
     );
-  }
+  
 }

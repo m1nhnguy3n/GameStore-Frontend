@@ -1,10 +1,9 @@
 import sumBy from 'lodash/sumBy';
-import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Box,
-  Button,
   Card,
   Container,
   Divider,
@@ -21,14 +20,15 @@ import {
   Tooltip,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+// redux
+import { getListInvoicesForAdmin } from '../../../redux/slices/user';
+import { useDispatch, useSelector } from '../../../redux/store';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useSettings from '../../../hooks/useSettings';
 import useTable, { emptyRows, getComparator } from '../../../hooks/useTable';
 import useTabs from '../../../hooks/useTabs';
-// _mock_
-import { _invoices } from '../../../_mock';
 // components
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import Iconify from '../../../components/Iconify';
@@ -42,21 +42,10 @@ import { InvoiceTableRow, InvoiceTableToolbar } from '../../../sections/@dashboa
 
 // ----------------------------------------------------------------------
 
-const SERVICE_OPTIONS = [
-  'all',
-  'full stack development',
-  'backend development',
-  'ui design',
-  'ui/ux design',
-  'front end development',
-];
-
 const TABLE_HEAD = [
   { id: 'invoiceNumber', label: 'Client', align: 'left' },
   { id: 'createDate', label: 'Create', align: 'left' },
-  { id: 'dueDate', label: 'Due', align: 'left' },
   { id: 'price', label: 'Amount', align: 'center', width: 140 },
-  { id: 'sent', label: 'Sent', align: 'center', width: 140 },
   { id: 'status', label: 'Status', align: 'left' },
   { id: '' },
 ];
@@ -89,25 +78,30 @@ export default function InvoiceList() {
     onChangeRowsPerPage,
   } = useTable({ defaultOrderBy: 'createDate' });
 
-  const [tableData, setTableData] = useState(_invoices);
+  const dispatch = useDispatch();
+  const { invoicesForAdmin } = useSelector((state) => state.user);
+
+  const [tableData, setTableData] = useState([]);
 
   const [filterName, setFilterName] = useState('');
 
-  const [filterService, setFilterService] = useState('all');
-
   const [filterStartDate, setFilterStartDate] = useState(null);
 
-  const [filterEndDate, setFilterEndDate] = useState(null);
-
   const { currentTab: filterStatus, onChangeTab: onFilterStatus } = useTabs('all');
+
+  useEffect(() => {
+    dispatch(getListInvoicesForAdmin());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (invoicesForAdmin.length) {
+      setTableData(invoicesForAdmin);
+    }
+  }, [invoicesForAdmin]);
 
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
     setPage(0);
-  };
-
-  const handleFilterService = (event) => {
-    setFilterService(event.target.value);
   };
 
   const handleDeleteRow = (id) => {
@@ -122,10 +116,6 @@ export default function InvoiceList() {
     setTableData(deleteRows);
   };
 
-  const handleEditRow = (id) => {
-    navigate(PATH_DASHBOARD.invoice.edit(id));
-  };
-
   const handleViewRow = (id) => {
     navigate(PATH_DASHBOARD.invoice.view(id));
   };
@@ -134,27 +124,20 @@ export default function InvoiceList() {
     tableData,
     comparator: getComparator(order, orderBy),
     filterName,
-    filterService,
     filterStatus,
     filterStartDate,
-    filterEndDate,
   });
 
   const denseHeight = dense ? 56 : 76;
 
-  const isNotFound =
-    (!dataFiltered.length && !!filterName) ||
-    (!dataFiltered.length && !!filterStatus) ||
-    (!dataFiltered.length && !!filterService) ||
-    (!dataFiltered.length && !!filterEndDate) ||
-    (!dataFiltered.length && !!filterStartDate);
+  const isNotFound = (!dataFiltered.length && !!filterName) || (!dataFiltered.length && !!filterStartDate);
 
   const getLengthByStatus = (status) => tableData.filter((item) => item.status === status).length;
 
   const getTotalPriceByStatus = (status) =>
     sumBy(
       tableData.filter((item) => item.status === status),
-      'totalPrice'
+      'total'
     );
 
   const getPercentByStatus = (status) => (getLengthByStatus(status) / tableData.length) * 100;
@@ -177,16 +160,6 @@ export default function InvoiceList() {
             { name: 'Invoices', href: PATH_DASHBOARD.invoice.root },
             { name: 'List' },
           ]}
-          action={
-            <Button
-              variant="contained"
-              component={RouterLink}
-              to={PATH_DASHBOARD.invoice.new}
-              startIcon={<Iconify icon={'eva:plus-fill'} />}
-            >
-              New Invoice
-            </Button>
-          }
         />
 
         <Card sx={{ mb: 5 }}>
@@ -200,7 +173,7 @@ export default function InvoiceList() {
                 title="Total"
                 total={tableData.length}
                 percent={100}
-                price={sumBy(tableData, 'totalPrice')}
+                price={sumBy(tableData, 'total')}
                 icon="ic:round-receipt"
                 color={theme.palette.info.main}
               />
@@ -267,18 +240,11 @@ export default function InvoiceList() {
 
           <InvoiceTableToolbar
             filterName={filterName}
-            filterService={filterService}
             filterStartDate={filterStartDate}
-            filterEndDate={filterEndDate}
             onFilterName={handleFilterName}
-            onFilterService={handleFilterService}
             onFilterStartDate={(newValue) => {
               setFilterStartDate(newValue);
             }}
-            onFilterEndDate={(newValue) => {
-              setFilterEndDate(newValue);
-            }}
-            optionsService={SERVICE_OPTIONS}
           />
 
           <Scrollbar>
@@ -348,7 +314,6 @@ export default function InvoiceList() {
                       selected={selected.includes(row.id)}
                       onSelectRow={() => onSelectRow(row.id)}
                       onViewRow={() => handleViewRow(row.id)}
-                      onEditRow={() => handleEditRow(row.id)}
                       onDeleteRow={() => handleDeleteRow(row.id)}
                     />
                   ))}
@@ -386,15 +351,7 @@ export default function InvoiceList() {
 
 // ----------------------------------------------------------------------
 
-function applySortFilter({
-  tableData,
-  comparator,
-  filterName,
-  filterStatus,
-  filterService,
-  filterStartDate,
-  filterEndDate,
-}) {
+function applySortFilter({ tableData, comparator, filterName, filterStatus, filterStartDate }) {
   const stabilizedThis = tableData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -408,8 +365,9 @@ function applySortFilter({
   if (filterName) {
     tableData = tableData.filter(
       (item) =>
-        item.invoiceNumber.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
-        item.invoiceTo.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+        item.id.toString().toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.user.firstName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 ||
+        item.user.lastName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
     );
   }
 
@@ -417,15 +375,11 @@ function applySortFilter({
     tableData = tableData.filter((item) => item.status === filterStatus);
   }
 
-  if (filterService !== 'all') {
-    tableData = tableData.filter((item) => item.items.some((c) => c.service === filterService));
-  }
-
-  if (filterStartDate && filterEndDate) {
-    tableData = tableData.filter(
-      (item) =>
-        item.createDate.getTime() >= filterStartDate.getTime() && item.createDate.getTime() <= filterEndDate.getTime()
-    );
+  if (filterStartDate) {
+    tableData = tableData.filter((item) => {
+      const createDate = new Date(item.createdAt);
+      return createDate.getTime() >= filterStartDate.getTime();
+    });
   }
 
   return tableData;

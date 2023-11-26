@@ -6,7 +6,6 @@ import { Grid, Link, Divider, Container, Typography, Stack } from '@mui/material
 import { PATH_PAGE } from '../../routes/paths';
 // components
 import Logo from '../../components/Logo';
-import SocialsButton from '../../components/SocialsButton';
 
 // ----------------------------------------------------------------------
 
@@ -14,9 +13,9 @@ const LINKS = [
   {
     headline: 'Game Store',
     children: [
-      { name: 'About us', href: PATH_PAGE.about },
-      { name: 'Contact us', href: PATH_PAGE.contact },
-      { name: 'FAQs', href: PATH_PAGE.faqs },
+      { name: 'About us', href: '#' },
+      { name: 'Contact us', href: '#' },
+      { name: 'FAQs', href: '#' },
     ],
   },
   {
@@ -61,13 +60,6 @@ export default function MainFooter() {
               optional gaming client giving you freedom of choice, and a vivid community of gamers. 
             </Typography>
 
-            <Stack
-              direction="row"
-              justifyContent={{ xs: 'center', md: 'flex-start' }}
-              sx={{ mt: 5, mb: { xs: 5, md: 0 } }}
-            >
-              <SocialsButton sx={{ mx: 0.5 }} />
-            </Stack>
           </Grid>
 
           <Grid item xs={12} md={7}>

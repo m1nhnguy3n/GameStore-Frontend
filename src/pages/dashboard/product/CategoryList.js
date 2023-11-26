@@ -1,11 +1,8 @@
 import { useSnackbar } from 'notistack';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 // form
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
 // @mui
-import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Card,
@@ -43,8 +40,10 @@ import {
 } from '../../../components/table';
 
 // sections
-import { CategoryTableRow, CategoryNewEditForm } from '../../../sections/@dashboard/product/category';
-import { ProductTableToolbar } from '../../../sections/@dashboard/product/product-list';
+import { CategoryNewEditForm, CategoryTableRow, CategoryTableToolbar } from '../../../sections/@dashboard/product/category';
+
+// api 
+import { deleteCategoryApi } from '../../../api/category';
 
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
@@ -77,13 +76,9 @@ export default function CategoryList() {
 
   const { themeStretch } = useSettings();
 
-  const dispatch = useDispatch();
-
   const { enqueueSnackbar } = useSnackbar();
 
-  const NewCategorySchema = Yup.object().shape({
-    categoryName: Yup.string().required('Category Name is required'),
-  });
+  const dispatch = useDispatch();
 
   const { categories, isLoading } = useSelector((state) => state.product);
 
@@ -91,21 +86,7 @@ export default function CategoryList() {
 
   const [filterName, setFilterName] = useState('');
   const [category, setCategory] = useState({});
-  const [isEdit, setEdit] = useState(false)
-
-  // const [defaultValues, setDefaultValues] = useState({
-  //   id: '',
-  //   categoryName: '',
-  // });
-
-  // useEffect(() => {
-  //   // Update defaultValues whenever category changes
-  //   setDefaultValues({
-  //     id: category?.id || '',
-  //     categoryName: category?.categoryName || '',
-  //   });
-  // }, [category]);
-
+  const [isEdit, setEdit] = useState(false);
 
   useEffect(() => {
     dispatch(getCategories());
@@ -115,18 +96,23 @@ export default function CategoryList() {
     if (categories.length) {
       setTableData(categories);
     }
-  }, [categories])
-
+  }, [categories]);
 
   const handleFilterName = (filterName) => {
     setFilterName(filterName);
     setPage(0);
   };
 
-  const handleDeleteRow = (id) => {
+  const handleDeleteRow = async (id) => {
     const deleteRow = tableData.filter((row) => row.id !== id);
     setSelected([]);
     setTableData(deleteRow);
+    await deleteCategoryApi(id).then(() => {
+      enqueueSnackbar('Delete success!');
+    }).catch(() => {
+      enqueueSnackbar('Delete failed!', { variant: 'error' });
+      
+    });
   };
 
   const handleDeleteRows = (selected) => {
@@ -136,10 +122,9 @@ export default function CategoryList() {
   };
 
   const handleEditRow = (data) => {
-    setEdit(true)
+    setEdit(true);
     setCategory(data);
   };
-
 
   const dataFiltered = applySortFilter({
     tableData,
@@ -159,13 +144,12 @@ export default function CategoryList() {
         />
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
-            <CategoryNewEditForm isEdit={ isEdit} category={category}/>
+            <CategoryNewEditForm isEdit={isEdit} category={category} />
           </Grid>
           <Grid item xs={12} md={8}>
             <Stack spacing={3}>
               <Card>
-                <ProductTableToolbar filterName={filterName} onFilterName={handleFilterName} />
-
+                <CategoryTableToolbar filterName={filterName} onFilterName={handleFilterName} />
                 <Scrollbar>
                   <TableContainer sx={{ minWidth: 400 }}>
                     {selected.length > 0 && (

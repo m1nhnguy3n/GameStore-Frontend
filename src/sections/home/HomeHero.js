@@ -5,11 +5,6 @@ import { Box, Button, Container, Stack, Typography ,Grid} from '@mui/material';
 import { styled } from '@mui/material/styles';
 // routes
 import { PATH_PAGE } from '../../routes/paths';
-
-// sections
-import {
-  EcommerceNewProducts,
-} from '../@dashboard/general/e-commerce';
 // components
 import { MotionContainer, varFade } from '../../components/animate';
 import Iconify from '../../components/Iconify';
@@ -76,14 +71,10 @@ export default function HomeHero() {
       <RootStyle>
         <HeroOverlayStyle
           alt="overlay"
-          // src="https://minimals.cc/assets/background/overlay_4.jpg"
           src="/icons/overlay_4.jpg"
           variants={varFade().in}
         />
-        <HeroImgStyle alt="hero" src="/icons/game_pc.jpg" variants={varFade().inUp} />
-        {/* <HeroImgStyle alt="hero" variants={varFade().inUp}>
-          <EcommerceNewProducts />
-        </HeroImgStyle> */}
+        <HeroImgStyle alt="hero" src="/icons/game-console1.png" variants={varFade().inUp} />
 
         <Container>
           <ContentStyle>
@@ -92,7 +83,7 @@ export default function HomeHero() {
                 Welcome <br />
                 to <br />
                 <Typography component="span" variant="h1" sx={{ color: 'primary.main' }}>
-                  Minh's Game Store
+                  Game Store
                 </Typography>
               </Typography>
             </m.div>

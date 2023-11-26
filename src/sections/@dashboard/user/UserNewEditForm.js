@@ -11,9 +11,10 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
+// api
+import { createUserApi, editUserApi } from '../../../api/user';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
-// _mock
 // components
 import Label from '../../../components/Label';
 import { FormProvider, RHFSelect, RHFSwitch, RHFTextField, RHFUploadAvatar } from '../../../components/hook-form';
@@ -30,34 +31,21 @@ export default function UserNewEditForm({ isEdit, currentUser }) {
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const rolesList = [
-    {
-      id: 1,
-      role: 'Administrator',
-    },
-    {
-      id: 2,
-      role: 'Customer',
-    },
-  ];
+  const rolesList = ['Administrator', 'Customer'];
 
   const NewUserSchema = Yup.object().shape({
     firstName: Yup.string().required('Name is required'),
-    lastName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email(),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
     role: Yup.string().required('Role is required'),
     avatarUrl: Yup.mixed().test('required', 'Avatar is required', (value) => value !== ''),
   });
 
   const defaultValues = useMemo(
     () => ({
+      id: currentUser?.id || '',
       firstName: currentUser?.firstName || '',
       lastName: currentUser?.lastName || '',
       email: currentUser?.email || '',
-      phoneNumber: currentUser?.phoneNumber || '',
-      address: currentUser?.address || '',
       avatarUrl: currentUser?.avatarUrl || '',
       isEmailValidated: currentUser?.isEmailValidated || true,
       role: currentUser?.roles[0] || '',
@@ -91,15 +79,34 @@ export default function UserNewEditForm({ isEdit, currentUser }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, currentUser]);
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (!isEdit) {
+        addUser(data);
+      } else {
+        editUser(data);
+      }
       reset();
       enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
       navigate(PATH_DASHBOARD.user.list);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const addUser = (user) => {
+    user.password = '123'
+    const formData = new FormData();
+    formData.append('avatar', user.avatarUrl);
+    formData.append('data', JSON.stringify(user));
+    createUserApi(formData);
+  };
+
+  const editUser = (user) => {
+    const formData = new FormData();
+    formData.append('avatar', user.avatarUrl);
+    formData.append('data', JSON.stringify(user));
+    editUserApi(user.id, formData);
   };
 
   const handleDrop = useCallback(
@@ -187,13 +194,11 @@ export default function UserNewEditForm({ isEdit, currentUser }) {
               <RHFTextField name="firstName" label="First Name" />
               <RHFTextField name="lastName" label="Last Name" />
               <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
-              <RHFTextField name="address" label="Address" />
               <RHFSelect name="role" label="Role" placeholder="Role">
                 <option value="" />
-                {rolesList.map((option) => (
-                  <option key={option.id} value={option.role}>
-                    {option.role}
+                {rolesList.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
                   </option>
                 ))}
               </RHFSelect>

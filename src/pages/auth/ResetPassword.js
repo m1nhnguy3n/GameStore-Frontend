@@ -20,7 +20,9 @@ import Page from '../../components/Page';
 
 // sections
 import useQuery from '../../hooks/useQuery';
-import axios from '../../utils/axios';
+// api
+import { resetPasswordApi } from '../../api/auth';
+
 
 // ----------------------------------------------------------------------
 
@@ -42,8 +44,12 @@ export default function ResetPassword() {
   const updatePassword = (data) => {
     const tokenFromQuery = query.get('token');
     if (tokenFromQuery) {
-      axios.post('/reset-password', { ...data, token: tokenFromQuery });
-      enqueueSnackbar('Update success!');
+      resetPasswordApi(data, tokenFromQuery).then(() => {
+      enqueueSnackbar('Reset password success!');
+      }).catch(() => {
+      enqueueSnackbar('Reset password failed!', { variant: 'error' });
+
+      });
     } else {
       enqueueSnackbar('Verify failed! Please check email again', { variant: 'error' });
     }
@@ -92,7 +98,7 @@ export default function ResetPassword() {
             <Typography variant="h3" paragraph>
               Reset your Password
             </Typography>
-            <Typography sx={{ color: 'text.secondary' }}>Click below button to verify your Account</Typography>
+            <Typography sx={{ color: 'text.secondary' }}>Enter New Password To Reset Your Password</Typography>
 
             <Box sx={{ mt: 5, mb: 3 }}>
               <Card sx={{ p: 3 }}>

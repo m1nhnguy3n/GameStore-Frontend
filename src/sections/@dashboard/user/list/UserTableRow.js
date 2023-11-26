@@ -17,8 +17,7 @@ UserTableRow.propTypes = {
 };
 
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { firstName, lastName, roles, email, isEmailValidated } = row;
-  const avatarURL = '';
+  const { firstName, lastName, roles, email, isEmailValidated, avatarUrl } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -37,7 +36,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={firstName} src={avatarURL} sx={{ mr: 2 }} />
+        <Avatar alt={firstName} src={avatarUrl} sx={{ mr: 2 }} />
         <Typography variant="subtitle2" sx={{ mr: 1 }}>
           {firstName}
         </Typography>

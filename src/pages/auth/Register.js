@@ -90,7 +90,7 @@ export default function Register() {
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
               Manage the job more effectively with Minimal
             </Typography>
-            <Image visibleByDefault disabledEffect alt="register" src="/icons/illustration_dashboard.png" />
+            <Image visibleByDefault disabledEffect alt="register" src="/icons/game-console.png" />
           </SectionStyle>
         )}
 

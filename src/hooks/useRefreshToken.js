@@ -1,12 +1,10 @@
-import axios from '../utils/axios';
+// api
+import { refreshApi } from '../api/auth';
 
 const useRefreshToken = () => {
   const refresh = async () => {
     const refreshTokenStored = window.localStorage.getItem('refreshToken');
-    const response = await axios.post(
-      '/auth/refresh',
-      { refreshToken: refreshTokenStored },
-    );
+    const response = await refreshApi(refreshTokenStored);
 
     return response.data.accessToken;
   };

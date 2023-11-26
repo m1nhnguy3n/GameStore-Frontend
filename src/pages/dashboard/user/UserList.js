@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 // @mui
 import {
   Box,
@@ -23,19 +24,19 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 // hooks
 import useSettings from '../../../hooks/useSettings';
 import useTable, { emptyRows, getComparator } from '../../../hooks/useTable';
-import useTabs from '../../../hooks/useTabs';
 // components
 import HeaderBreadcrumbs from '../../../components/HeaderBreadcrumbs';
 import Iconify from '../../../components/Iconify';
 import Page from '../../../components/Page';
 import Scrollbar from '../../../components/Scrollbar';
 import { TableEmptyRows, TableHeadCustom, TableNoData, TableSelectedActions } from '../../../components/table';
+// api
+import { deleteOneUser } from '../../../api/user';
 // sections
 import { UserTableRow, UserTableToolbar } from '../../../sections/@dashboard/user/list';
 
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'active', 'banned'];
 
 const ROLE_OPTIONS = ['all', 'Administrator', 'Customer'];
 
@@ -76,13 +77,14 @@ export default function UserList() {
 
   const navigate = useNavigate();
 
+  const { enqueueSnackbar } = useSnackbar();
+
+
   const [tableData, setTableData] = useState([]);
 
   const [filterName, setFilterName] = useState('');
 
   const [filterRole, setFilterRole] = useState('all');
-
-  const { currentTab: filterStatus, onChangeTab: onChangeFilterStatus } = useTabs('all');
 
   useEffect(() => {
     dispatch(getUsers());
@@ -107,6 +109,12 @@ export default function UserList() {
     const deleteRow = tableData.filter((row) => row.id !== id);
     setSelected([]);
     setTableData(deleteRow);
+    deleteOneUser(id)
+      .then(() => {
+        enqueueSnackbar("Delete Succeed!!");
+      }).catch(() => {
+        enqueueSnackbar('Delete Failed!!', {variant: 'error'});
+    });
   };
 
   const handleDeleteRows = (selected) => {
@@ -153,20 +161,6 @@ export default function UserList() {
         />
 
         <Card>
-          {/* <Tabs
-            allowScrollButtonsMobile
-            variant="scrollable"
-            scrollButtons="auto"
-            value={filterStatus}
-            onChange={onChangeFilterStatus}
-            sx={{ px: 2, bgcolor: 'background.neutral' }}
-          >
-            {STATUS_OPTIONS.map((tab) => (
-              <Tab disableRipple key={tab} label={tab} value={tab} />
-            ))}
-          </Tabs>
-
-          <Divider /> */}
 
           <UserTableToolbar
             filterName={filterName}
@@ -260,7 +254,7 @@ export default function UserList() {
 
 // ----------------------------------------------------------------------
 
-function applySortFilter({ tableData, comparator, filterName, filterStatus, filterRole }) {
+function applySortFilter({ tableData, comparator, filterName, filterRole }) {
   const stabilizedThis = tableData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {
@@ -273,10 +267,6 @@ function applySortFilter({ tableData, comparator, filterName, filterStatus, filt
 
   if (filterName) {
     tableData = tableData.filter((item) => item.firstName.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
-  }
-
-  if (filterStatus !== 'all') {
-    tableData = tableData.filter((item) => item.status === filterStatus);
   }
 
   if (filterRole !== 'all') {

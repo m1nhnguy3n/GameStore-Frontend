@@ -5,7 +5,6 @@ export { default as BookingIllustration } from './illustration_booking';
 export { default as CheckInIllustration } from './illustration_checkin';
 export { default as CheckOutIllustration } from './illustration_checkout';
 export { default as ComingSoonIllustration } from './illustration_coming_soon';
-export { default as DocIllustration } from './illustration_doc';
 export { default as MaintenanceIllustration } from './illustration_maintenance';
 export { default as MotivationIllustration } from './illustration_motivation';
 export { default as OrderCompleteIllustration } from './illustration_order_complete';

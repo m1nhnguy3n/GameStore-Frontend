@@ -1,10 +1,12 @@
 import { useParams } from 'react-router-dom';
+import {useEffect} from 'react'
 // @mui
 import { Container } from '@mui/material';
+// redux
+import { getListInvoicesForAdmin } from '../../../redux/slices/user';
+import { useDispatch, useSelector } from '../../../redux/store';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
-// _mock_
-import { _invoices } from '../../../_mock';
 // hooks
 import useSettings from '../../../hooks/useSettings';
 // components
@@ -17,10 +19,17 @@ import Invoice from '../../../sections/@dashboard/invoice/details';
 
 export default function InvoiceDetails() {
   const { themeStretch } = useSettings();
+  const dispatch = useDispatch();
 
   const { id } = useParams();
 
-  const invoice = _invoices.find((invoice) => invoice.id === id);
+  const { invoicesForAdmin } = useSelector((state) => state.user);
+
+  const invoice = invoicesForAdmin.find((invoice) => invoice.id === Number(id));
+
+  useEffect(() => {
+    dispatch(getListInvoicesForAdmin());
+  }, [dispatch]);
 
   return (
     <Page title="Invoice: View">
@@ -33,7 +42,7 @@ export default function InvoiceDetails() {
               name: 'Invoices',
               href: PATH_DASHBOARD.invoice.root,
             },
-            { name: invoice?.invoiceNumber || '' },
+            { name: invoice?.id.toString() || '' },
           ]}
         />
 

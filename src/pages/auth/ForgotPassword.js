@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { Box, Button, Container, Typography } from '@mui/material';
@@ -16,7 +15,8 @@ import { ResetPasswordForm } from '../../sections/auth/forgot-password';
 // assets
 import { SentIcon } from '../../assets';
 
-import { sendMailResetPassword } from '../../redux/slices/mail';
+// api
+import { sendMailResetPasswordApi } from '../../api/auth';
 // ----------------------------------------------------------------------
 
 const RootStyle = styled('div')(({ theme }) => ({
@@ -33,10 +33,8 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
 
-  const dispatch = useDispatch();
-
-  const sendResetPasswordEmail = (value) => {
-    dispatch(sendMailResetPassword(value));
+  const sendResetPasswordEmail = (email) => {
+    sendMailResetPasswordApi(email);
   };
 
   return (

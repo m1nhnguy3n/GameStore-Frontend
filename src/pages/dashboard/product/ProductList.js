@@ -117,6 +117,10 @@ export default function ProductList() {
     navigate(PATH_DASHBOARD.product.edit(paramCase(name)));
   };
 
+  const handleManageCdkeyRow = (id) => {
+    navigate(PATH_DASHBOARD.product.cdkey(id));
+  };
+
   const dataFiltered = applySortFilter({
     tableData,
     comparator: getComparator(order, orderBy),
@@ -206,6 +210,7 @@ export default function ProductList() {
                           onSelectRow={() => onSelectRow(row.id)}
                           onDeleteRow={() => handleDeleteRow(row.id)}
                           onEditRow={() => handleEditRow(row.productName)}
+                          onManageCdkeyRow={() => handleManageCdkeyRow(row.id)}
                         />
                       ) : (
                         !isNotFound && <TableSkeleton key={index} sx={{ height: denseHeight }} />

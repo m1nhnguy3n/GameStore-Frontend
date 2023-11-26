@@ -1,6 +1,6 @@
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // @mui
-import { AppBar, Box, Button, Container, Toolbar, Link } from '@mui/material';
+import { AppBar, Box, Button, Container, Link, Toolbar } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 // hooks
 import useAuth from '../../hooks/useAuth';
@@ -12,7 +12,7 @@ import cssStyles from '../../utils/cssStyles';
 // config
 import { HEADER } from '../../config';
 // routes
-import { PATH_AUTH, PATH_PAGE } from '../../routes/paths';
+import { PATH_AUTH } from '../../routes/paths';
 // components
 import Logo from '../../components/Logo';
 //
@@ -63,7 +63,6 @@ export default function MainHeader() {
   const isHome = pathname === '/';
   const linkTo = PATH_AUTH.login;
 
-
   return (
     <AppBar sx={{ boxShadow: 0, bgcolor: 'transparent' }}>
       <ToolbarStyle
@@ -89,9 +88,7 @@ export default function MainHeader() {
 
           {!user ? (
             <Link to={linkTo} color="inherit" component={RouterLink}>
-              <Button variant="contained" target="_blank" rel="noopener"
-                // src="/icons/illustration_dashboard.png"
-              >
+              <Button variant="contained" target="_blank" rel="noopener">
                 Login Now
               </Button>
             </Link>

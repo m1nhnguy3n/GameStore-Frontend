@@ -1,10 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
 import sum from 'lodash/sum';
 import uniqBy from 'lodash/uniqBy';
-// utils
-import axios from '../../utils/axios';
+// api
+import { getCategoriesApi } from '../../api/category';
+import { getPlatformsApi } from '../../api/platform';
+import {
+  addProductApi,
+  editProductApi,
+  getProductsApi,
+  getStockStatusesApi,
+  searchProductByNameApi,
+} from '../../api/product';
+import { getCdkeyApi } from '../../api/cdkey';
 //
 import { dispatch } from '../store';
+
+
+
 
 // ----------------------------------------------------------------------
 
@@ -15,6 +27,8 @@ const initialState = {
   product: null,
   categories: [],
   platforms: [],
+  stockStatuses: [],
+  cdkey: null,
   sortBy: null,
   filters: {
     category: 'All',
@@ -51,6 +65,11 @@ const slice = createSlice({
       state.products = action.payload;
     },
 
+    getCdkeySuccess(state, action) {
+      state.isLoading = false;
+      state.cdkey = action.payload;
+    },
+
     getPlatformsSuccess(state, action) {
       state.isLoading = false;
       state.platforms = action.payload;
@@ -59,6 +78,11 @@ const slice = createSlice({
     getCategoriesSuccess(state, action) {
       state.isLoading = false;
       state.categories = action.payload;
+    },
+
+    getStockStatusesSuccess(state, action) {
+      state.isLoading = false;
+      state.stockStatuses = action.payload;
     },
 
     // GET PRODUCT
@@ -206,7 +230,7 @@ export function getProducts() {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/product/');
+      const response = await getProductsApi();
       dispatch(slice.actions.getProductsSuccess(response.data));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -220,7 +244,7 @@ export function getProduct(name) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get(`/product/search/${name}`);
+      const response = await searchProductByNameApi(name);
       dispatch(slice.actions.getProductSuccess(response.data));
     } catch (error) {
       console.error(error);
@@ -229,12 +253,15 @@ export function getProduct(name) {
   };
 }
 
-export function updateProduct(id) {
+export function updateProduct(product) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.put(`/product/${id}`, {});
-      // dispatch(slice.actions.getProductSuccess(response.data));
+      const formData = new FormData();
+      formData.append('image', product.image);
+      formData.append('data', JSON.stringify(product));
+
+      await editProductApi(product);
     } catch (error) {
       console.error(error);
       dispatch(slice.actions.hasError(error));
@@ -251,9 +278,9 @@ export function addProduct(product) {
       formData.append('image', product.image)
       formData.append('data', JSON.stringify(product));
 
-      await axios.post('/file/upload-image', formData);
+      // await axios.post('/file/upload-image', formData);
 
-      await axios.post('/product', formData);
+      await addProductApi(formData);
     } catch (error) {
       console.error(error);
       dispatch(slice.actions.hasError(error));
@@ -265,7 +292,7 @@ export function getPlatforms() {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/platform');
+      const response = await getPlatformsApi();
       dispatch(slice.actions.getPlatformsSuccess(response.data));
     } catch (error) {
       console.error(error);
@@ -278,9 +305,34 @@ export function getCategories() {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/category');
-
+      const response = await getCategoriesApi();
       dispatch(slice.actions.getCategoriesSuccess(response.data));
+    } catch (error) {
+      console.error(error);
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getStockStatuses() {
+  return async () => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await getStockStatusesApi();
+      dispatch(slice.actions.getStockStatusesSuccess(response.data));
+    } catch (error) {
+      console.error(error);
+      dispatch(slice.actions.hasError(error));
+    }
+  };
+}
+
+export function getCdkey(productId) {
+  return async () => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const response = await getCdkeyApi(productId);
+      dispatch(slice.actions.getCdkeySuccess(response.data));
     } catch (error) {
       console.error(error);
       dispatch(slice.actions.hasError(error));

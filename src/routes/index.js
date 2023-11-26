@@ -52,8 +52,6 @@ export default function Router() {
             </GuestGuard>
           ),
         },
-        { path: 'login-unprotected', element: <Login /> },
-        { path: 'register-unprotected', element: <Register /> },
         { path: 'forgot-password', element: <ForgotPassword /> },
         { path: 'reset-password', element: <ResetPassword /> },
         { path: 'verify', element: <Verify /> },
@@ -65,23 +63,17 @@ export default function Router() {
       path: 'dashboard',
       element: (
         <AuthGuard>
-            <RoleBasedGuard accessibleRoles={user?.roles}>
-              <DashboardLayout />
-            </RoleBasedGuard>
+          <RoleBasedGuard accessibleRoles={user?.roles}>
+            <DashboardLayout />
+          </RoleBasedGuard>
         </AuthGuard>
       ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
-        { path: 'app', element: <GeneralApp /> },
-        { path: 'ecommerce', element: <GeneralEcommerce /> },
-        { path: 'analytics', element: <GeneralAnalytics /> },
-        { path: 'banking', element: <GeneralBanking /> },
-        { path: 'booking', element: <GeneralBooking /> },
-
         {
           path: 'product',
           children: [
-            { element: <Navigate to="/dashboard/product/shop" replace />, index: true },
+            { element: <Navigate to="/dashboard/product/list" replace />, index: true },
             { path: 'shop', element: <Shop /> },
             { path: ':name', element: <ProductDetails /> },
             { path: 'list', element: <ProductList /> },
@@ -89,6 +81,8 @@ export default function Router() {
             { path: ':name/edit', element: <ProductCreate /> },
             { path: 'checkout', element: <Checkout /> },
             { path: 'category', element: <Category /> },
+            { path: 'platform', element: <Platform /> },
+            { path: 'cdkey/:productId', element: <Cdkey /> },
           ],
         },
         {
@@ -107,8 +101,6 @@ export default function Router() {
             { element: <Navigate to="/dashboard/invoice/list" replace />, index: true },
             { path: 'list', element: <InvoiceList /> },
             { path: ':id', element: <InvoiceDetails /> },
-            { path: ':id/edit', element: <InvoiceEdit /> },
-            { path: 'new', element: <InvoiceCreate /> },
           ],
         },
       ],
@@ -119,12 +111,10 @@ export default function Router() {
       path: '*',
       element: <LogoOnlyLayout />,
       children: [
-        { path: 'coming-soon', element: <ComingSoon /> },
-        { path: 'maintenance', element: <Maintenance /> },
-        { path: 'payment', element: <Payment /> },
         { path: '500', element: <Page500 /> },
         { path: '404', element: <NotFound /> },
         { path: '403', element: <NoPermission /> },
+
         { path: '*', element: <Navigate to="/404" replace /> },
       ],
     },
@@ -133,12 +123,6 @@ export default function Router() {
       element: <MainLayout />,
       children: [
         { element: <HomePage />, index: true },
-        { path: 'about-us', element: <About /> },
-        { path: 'contact-us', element: <Contact /> },
-        { path: 'faqs', element: <Faqs /> },
-        // { path: 'shop', element: <Shop /> },
-        // { path: 'checkout', element: <Checkout /> },
-        // { path: ':name', element: <ProductDetails /> },
         { path: 'account', element: <UserAccount /> },
         {
           path: 'product',
@@ -146,7 +130,14 @@ export default function Router() {
             { element: <Navigate to="/product/shop" replace />, index: true },
             { path: 'shop', element: <Shop /> },
             { path: ':name', element: <ProductDetails /> },
-            { path: 'checkout', element: <Checkout /> },
+            {
+              path: 'checkout',
+              element: (
+                <AuthGuard>
+                  <Checkout />
+                </AuthGuard>
+              ),
+            },
           ],
         },
       ],
@@ -162,43 +153,27 @@ const ResetPassword = Loadable(lazy(() => import('../pages/auth/ResetPassword'))
 const ForgotPassword = Loadable(lazy(() => import('../pages/auth/ForgotPassword')));
 const Verify = Loadable(lazy(() => import('../pages/auth/Verify')));
 
-// DASHBOARD
-
-// GENERAL
-const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
-const GeneralEcommerce = Loadable(lazy(() => import('../pages/dashboard/GeneralEcommerce')));
-const GeneralAnalytics = Loadable(lazy(() => import('../pages/dashboard/GeneralAnalytics')));
-const GeneralBanking = Loadable(lazy(() => import('../pages/dashboard/GeneralBanking')));
-const GeneralBooking = Loadable(lazy(() => import('../pages/dashboard/GeneralBooking')));
-
 // PRODUCT
-const Shop = Loadable(lazy(() => import('../pages/dashboard/Shop')));
-const ProductDetails = Loadable(lazy(() => import('../pages/dashboard/ProductDetails')));
+const Shop = Loadable(lazy(() => import('../pages/customer/product/Shop')));
+const ProductDetails = Loadable(lazy(() => import('../pages/customer/product/ProductDetails')));
 const ProductList = Loadable(lazy(() => import('../pages/dashboard/product/ProductList')));
 const ProductCreate = Loadable(lazy(() => import('../pages/dashboard/product/ProductCreate')));
-const Checkout = Loadable(lazy(() => import('../pages/dashboard/product/Checkout')));
+const Checkout = Loadable(lazy(() => import('../pages/customer/product/Checkout')));
 const Category = Loadable(lazy(() => import('../pages/dashboard/product/CategoryList')));
-
+const Platform = Loadable(lazy(() => import('../pages/dashboard/product/PlatformList')));
+const Cdkey = Loadable(lazy(() => import('../pages/dashboard/product/CdkeyList')));
 
 // INVOICE
 const InvoiceList = Loadable(lazy(() => import('../pages/dashboard/invoice/InvoiceList')));
 const InvoiceDetails = Loadable(lazy(() => import('../pages/dashboard/invoice/InvoiceDetails')));
-const InvoiceCreate = Loadable(lazy(() => import('../pages/dashboard/invoice/InvoiceCreate')));
-const InvoiceEdit = Loadable(lazy(() => import('../pages/dashboard/invoice/InvoiceEdit')));
 
 // USER
 const UserList = Loadable(lazy(() => import('../pages/dashboard/user/UserList')));
-const UserAccount = Loadable(lazy(() => import('../pages/dashboard/UserAccount')));
+const UserAccount = Loadable(lazy(() => import('../pages/customer/user/UserAccount')));
 const UserCreate = Loadable(lazy(() => import('../pages/dashboard/user/UserCreate')));
 
 // MAIN
 const HomePage = Loadable(lazy(() => import('../pages/Home')));
-const About = Loadable(lazy(() => import('../pages/other/About')));
-const Contact = Loadable(lazy(() => import('../pages/other/Contact')));
-const Faqs = Loadable(lazy(() => import('../pages/other/Faqs')));
-const ComingSoon = Loadable(lazy(() => import('../pages/other/ComingSoon')));
-const Maintenance = Loadable(lazy(() => import('../pages/other/Maintenance')));
-const Payment = Loadable(lazy(() => import('../pages/other/Payment')));
 const Page500 = Loadable(lazy(() => import('../pages/error/Page500')));
 const NotFound = Loadable(lazy(() => import('../pages/error/Page404')));
 const NoPermission = Loadable(lazy(() => import('../pages/error/Page403')));

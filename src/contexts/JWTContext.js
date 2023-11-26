@@ -3,8 +3,10 @@ import { createContext, useEffect, useReducer } from 'react';
 // hooks
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 // utils
-import axios from '../utils/axios';
 import { setAccessToken, setRefreshToken } from '../utils/jwt';
+
+// api
+import { loginApi, registerApi } from '../api/auth';
 
 // ----------------------------------------------------------------------
 
@@ -114,10 +116,7 @@ function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const response = await axios.post('/auth/login', {
-      email,
-      password,
-    });
+    const response = await loginApi(email, password);
     const { accessToken, user, refreshToken } = response.data;
 
     setAccessToken(accessToken);
@@ -132,12 +131,7 @@ function AuthProvider({ children }) {
   };
 
   const register = async (email, password, firstName, lastName) => {
-    const response = await axios.post('/auth/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
+    const response = await registerApi(email, password, firstName, lastName);
     const { accessToken, user, refreshToken } = response.data;
 
     setAccessToken(accessToken);
@@ -154,20 +148,6 @@ function AuthProvider({ children }) {
   const logout = async () => {
     setAccessToken(null);
     dispatch({ type: 'LOGOUT' });
-  };
-
-  const refresh = async () => {
-    try {
-      const refreshTokenStored = window.localStorage.getItem('refreshToken');
-      const res = axios
-        .post('/auth/refresh', {
-          refreshToken: refreshTokenStored,
-        })
-        .then((token) => token.data.accessToken);
-      return res;
-    } catch (error) {
-      return error;
-    }
   };
 
   return (

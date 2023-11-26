@@ -1,7 +1,6 @@
-
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
-import { Alert, Box, Card, Container, Link, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Card, Container, Link, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // routes
 import { PATH_AUTH } from '../../routes/paths';
@@ -90,7 +89,7 @@ export default function Login() {
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
               Hi, Welcome Back
             </Typography>
-            <Image alt="login" src="/icons/illustration_dashboard.png" />
+            <Image alt="login" src="/icons/game-console.png" />
           </SectionStyle>
         )}
 

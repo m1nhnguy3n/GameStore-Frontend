@@ -22,9 +22,10 @@ ProductTableRow.propTypes = {
   onEditRow: PropTypes.func,
   onSelectRow: PropTypes.func,
   onDeleteRow: PropTypes.func,
+  onManageCdkeyRow: PropTypes.func,
 };
 
-export default function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
+export default function ProductTableRow({ row, selected, onEditRow, onManageCdkeyRow, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
   const { productName, image, price, createdAt, stockStatus, available } = row;
@@ -97,6 +98,15 @@ export default function ProductTableRow({ row, selected, onEditRow, onSelectRow,
               >
                 <Iconify icon={'eva:edit-fill'} />
                 Edit
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  onManageCdkeyRow();
+                  handleCloseMenu();
+                }}
+              >
+                <Iconify icon={'eva:edit-fill'} />
+                Manage CDKeys
               </MenuItem>
             </>
           }

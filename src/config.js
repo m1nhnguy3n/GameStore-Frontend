@@ -1,5 +1,5 @@
 // routes
-import { PATH_DASHBOARD, PATH_PAGE } from './routes/paths';
+import { PATH_DASHBOARD } from './routes/paths';
 
 // API
 // ----------------------------------------------------------------------
@@ -18,9 +18,7 @@ export const FIREBASE_API = {
 };
 
 // ROOT PATH AFTER LOGIN SUCCESSFUL
-export const PATH_AFTER_LOGIN = PATH_DASHBOARD.general.app;
-// export const PATH_AFTER_LOGIN = PATH_PAGE.product.shop // as '/dashboard/app'
-// as '/dashboard/app'
+export const PATH_AFTER_LOGIN = PATH_DASHBOARD.product.list;
 
 // LAYOUT
 // ----------------------------------------------------------------------
@@ -52,7 +50,7 @@ export const ICON = {
 // ----------------------------------------------------------------------
 
 export const defaultSettings = {
-  themeMode: 'light',
+  themeMode: 'dark',
   themeDirection: 'ltr',
   themeColorPresets: 'default',
   themeLayout: 'horizontal',

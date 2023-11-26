@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
+import { Checkbox, Link, MenuItem, Stack, TableCell, TableRow, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Checkbox, TableRow, TableCell, Typography, Stack, Link, MenuItem } from '@mui/material';
 // utils
-import { fDate } from '../../../../utils/formatTime';
 import createAvatar from '../../../../utils/createAvatar';
 import { fCurrency } from '../../../../utils/formatNumber';
+import { fDate } from '../../../../utils/formatTime';
 // components
-import Label from '../../../../components/Label';
 import Avatar from '../../../../components/Avatar';
 import Iconify from '../../../../components/Iconify';
+import Label from '../../../../components/Label';
 import { TableMoreMenu } from '../../../../components/table';
 
 // ----------------------------------------------------------------------
@@ -20,14 +20,17 @@ InvoiceTableRow.propTypes = {
   selected: PropTypes.bool,
   onSelectRow: PropTypes.func,
   onViewRow: PropTypes.func,
-  onEditRow: PropTypes.func,
   onDeleteRow: PropTypes.func,
 };
 
-export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onEditRow, onDeleteRow }) {
+export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { sent, invoiceNumber, createDate, dueDate, status, invoiceTo, totalPrice } = row;
+  const { id, createdAt, status, total, user } = row;
+
+  const { firstName, lastName } = user;
+
+  const name = `${firstName} ${lastName}`;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -46,30 +49,24 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
       </TableCell>
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={invoiceTo.name} color={createAvatar(invoiceTo.name).color} sx={{ mr: 2 }}>
-          {createAvatar(invoiceTo.name).name}
+        <Avatar alt={name} color={createAvatar(name).color} sx={{ mr: 2 }}>
+          {createAvatar(name).name}
         </Avatar>
 
         <Stack>
           <Typography variant="subtitle2" noWrap>
-            {invoiceTo.name}
+            {name}
           </Typography>
 
           <Link noWrap variant="body2" onClick={onViewRow} sx={{ color: 'text.disabled', cursor: 'pointer' }}>
-            {invoiceNumber}
+            {id}
           </Link>
         </Stack>
       </TableCell>
 
-      <TableCell align="left">{fDate(createDate)}</TableCell>
+      <TableCell align="left">{fDate(createdAt)}</TableCell>
 
-      <TableCell align="left">{fDate(dueDate)}</TableCell>
-
-      <TableCell align="center">{fCurrency(totalPrice)}</TableCell>
-
-      <TableCell align="center" sx={{ textTransform: 'capitalize' }}>
-        {sent}
-      </TableCell>
+      <TableCell align="center">{fCurrency(total)}</TableCell>
 
       <TableCell align="left">
         <Label
@@ -112,16 +109,6 @@ export default function InvoiceTableRow({ row, selected, onSelectRow, onViewRow,
               >
                 <Iconify icon={'eva:eye-fill'} />
                 View
-              </MenuItem>
-
-              <MenuItem
-                onClick={() => {
-                  onEditRow();
-                  handleCloseMenu();
-                }}
-              >
-                <Iconify icon={'eva:edit-fill'} />
-                Edit
               </MenuItem>
             </>
           }

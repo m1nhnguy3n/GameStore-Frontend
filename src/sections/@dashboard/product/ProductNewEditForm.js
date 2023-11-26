@@ -13,8 +13,8 @@ import { styled } from '@mui/material/styles';
 import { sentenceCase } from 'change-case';
 
 // redux
-import { addProduct } from '../../../redux/slices/product';
-import { useDispatch } from '../../../redux/store';
+import { addProduct, updateProduct, getCategories, getPlatforms, getStockStatuses } from '../../../redux/slices/product';
+import { useDispatch, useSelector } from '../../../redux/store';
 
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
@@ -45,14 +45,14 @@ const STOCK_STATUS = [
   },
 ];
 
-const PUBLISHER_OPTION = [
+const PLATFORM_OPTION = [
   {
     id: 1,
-    publisherName: 'Steam',
+    platformName: 'Steam',
   },
   {
     id: 2,
-    publisherName: 'Epic Games',
+    platformName: 'Epic Games',
   },
 ];
 
@@ -76,6 +76,15 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
 
   const dispatch = useDispatch();
 
+  const { categories, platforms, stockStatuses } = useSelector((state) => state.product);
+
+  useEffect(() => {
+    dispatch(getCategories());
+    dispatch(getPlatforms());
+    dispatch(getStockStatuses());
+  }, [dispatch]);
+
+
   const NewProductSchema = Yup.object().shape({
     productName: Yup.string().required('Name is required'),
     description: Yup.string().required('Description is required'),
@@ -91,9 +100,9 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
       image: currentProduct?.image || '',
       price: currentProduct?.price || 0,
       available: currentProduct?.available || 0,
-      stockId: currentProduct?.stockId || STOCK_STATUS[0].id,
-      categoryId: currentProduct?.categoryId || CATEGORY_OPTION[0].id,
-      publisherId: currentProduct?.publisherId || PUBLISHER_OPTION[0].id,
+      stockId: currentProduct?.stockId || stockStatuses[0]?.id,
+      categoryId: currentProduct?.categoryId || categories[0]?.id,
+      platformId: currentProduct?.publisherId || platforms[0]?.id,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentProduct]
@@ -143,18 +152,11 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
   };
 
   const handleAndAddProduct = (product) => {
-    // console.log(product.inStock);
-    // const stockStatusId = product.inStock ? 1 : 2;
-    // product.stockId = stockStatusId;
-    console.log(product.image);
     dispatch(addProduct(product));
   };
 
-  const handleAndUpdateData = (data) => {
-    const value = {
-      categoryId: data.categoryId,
-    };
-    console.log(value);
+  const handleAndUpdateData = (product) => {
+    dispatch(updateProduct(product));
   };
 
   const handleDrop = useCallback(
@@ -197,7 +199,6 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
         <Grid item xs={12} md={4}>
           <Stack spacing={3}>
             <Card sx={{ p: 3 }}>
-              {/* <RHFSwitch name="inStock" label="In stock" /> */}
               <RHFSelect name="stockId" label="Stock Status">
                 {STOCK_STATUS.map((stockStatus) => (
                   <option key={stockStatus.id} value={Number(stockStatus.id)}>
@@ -214,17 +215,17 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
                     </option>
                   ))}
                 </RHFSelect>
-                <RHFSelect name="publisherId" label="Publisher">
-                  {PUBLISHER_OPTION.map((publisher) => (
-                    <option key={publisher.id} value={Number(publisher.id)}>
-                      {publisher.publisherName}
+                <RHFSelect name="platformId" label="Platform">
+                  {PLATFORM_OPTION.map((platform) => (
+                    <option key={platform.id} value={Number(platform.id)}>
+                      {platform.platformName}
                     </option>
                   ))}
                 </RHFSelect>
               </Stack>
             </Card>
             <Card sx={{ p: 3 }}>
-              <Stack spacing={3} mb={2}>
+              {/* <Stack spacing={3} mb={2}>
                 <RHFTextField
                   name="available"
                   label="Available"
@@ -236,7 +237,7 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
                     type: 'number',
                   }}
                 />
-              </Stack>
+              </Stack> */}
 
               <Stack spacing={3} mb={2}>
                 <RHFTextField
