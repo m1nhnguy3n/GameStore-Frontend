@@ -10,7 +10,7 @@ export function sendMailResetPasswordApi(email) {
 }
 
 export function resetPasswordApi(password, tokenToReset) {
-    return axios.post('/reset-password', { ...password, token: tokenToReset });
+    return axios.post('/auth/reset-password', { ...password, token: tokenToReset });
 }
 
 export function loginApi(email, password) {
