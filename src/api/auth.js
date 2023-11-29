@@ -34,4 +34,10 @@ export function refreshApi(refreshToken) {
   });
 }
 
+export function verifyEmailApi(token) {
+  return axios.get(`/emailverify/confirm?token=${token}`);
+}
 
+export function changePasswordApi(password, userId) {
+    return axios.post('/auth/change-password', { ...password, userId });
+}

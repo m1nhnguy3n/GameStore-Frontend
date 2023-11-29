@@ -62,36 +62,48 @@ export default function PlatformNewEditForm({ isEdit, platform }) {
   }, [isEdit, platform]);
 
   const addPlatform = async (data) => {
-    const response = await addPlatformApi(data).then((response) => {
-      enqueueSnackbar('Create success!' || response.statusText);
-    });
+    await addPlatformApi(data)
+      .then((response) => {
+        enqueueSnackbar(response.message || 'Create success!');
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message || 'Create Failed!');
+      });
   };
 
   const editPlatform = async (data) => {
-    const response = await editPlatformApi(data);
-    enqueueSnackbar('Update success!' || response.statusText);
-  }
-    const onSubmit = async (data) => {
-      try {
-        addPlatform(data);
-        reset();
-      } catch (error) {
-        console.error(error);
+    await editPlatformApi(data)
+      .then((response) => {
+        enqueueSnackbar(response.statusText || 'Update success!');
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message || 'Create Failed!');
+      });
+  };
+  const onSubmit = async (data) => {
+    try {
+      if (isEdit) {
+        await editPlatform(data);
+      } else {
+        await addPlatform(data);
       }
-    };
+      reset();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    return (
-      <Card sx={{ p: 3 }}>
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={3} alignItems="flex-end">
-            <RHFTextField name="platformName" label="Platform Name" />
+  return (
+    <Card sx={{ p: 3 }}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={3} alignItems="flex-end">
+          <RHFTextField name="platformName" label="Platform Name" />
 
-            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              Save Changes
-            </LoadingButton>
-          </Stack>
-        </FormProvider>
-      </Card>
-    );
-  
+          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+            Save Changes
+          </LoadingButton>
+        </Stack>
+      </FormProvider>
+    </Card>
+  );
 }

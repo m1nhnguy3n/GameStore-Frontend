@@ -1,4 +1,5 @@
 import { paramCase } from 'change-case';
+import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // @mui
@@ -16,6 +17,8 @@ import {
   TablePagination,
   Tooltip,
 } from '@mui/material';
+// api
+import { deleteProductApi } from '../../../api/product';
 // redux
 import { getProducts } from '../../../redux/slices/product';
 import { useDispatch, useSelector } from '../../../redux/store';
@@ -80,6 +83,8 @@ export default function ProductList() {
 
   const dispatch = useDispatch();
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const { products, isLoading } = useSelector((state) => state.product);
 
   const [tableData, setTableData] = useState([]);
@@ -101,10 +106,17 @@ export default function ProductList() {
     setPage(0);
   };
 
-  const handleDeleteRow = (id) => {
+  const handleDeleteRow = async (id) => {
     const deleteRow = tableData.filter((row) => row.id !== id);
     setSelected([]);
     setTableData(deleteRow);
+    await deleteProductApi(id)
+      .then(() => {
+        enqueueSnackbar('Delete Success!');
+      })
+      .catch(() => {
+        enqueueSnackbar('Delete Failed!', { variant: 'error' });
+      });
   };
 
   const handleDeleteRows = (selected) => {

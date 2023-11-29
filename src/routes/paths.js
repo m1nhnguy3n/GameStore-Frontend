@@ -49,9 +49,11 @@ export const PATH_DASHBOARD = {
     view: (name) => path(ROOTS_DASHBOARD, `/product/${name}`),
     edit: (name) => path(ROOTS_DASHBOARD, `/product/${name}/edit`),
     category: path(ROOTS_DASHBOARD, '/product/category'),
+    platform: path(ROOTS_DASHBOARD, '/product/platform'),
   },
   invoice: {
     root: path(ROOTS_DASHBOARD, '/invoice'),
     list: path(ROOTS_DASHBOARD, '/invoice/list'),
+    view: (id) => path(ROOTS_DASHBOARD, `/invoice/${id}`),
   },
 };

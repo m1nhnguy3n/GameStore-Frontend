@@ -48,7 +48,7 @@ export default function CheckoutOrderComplete({ ...other }) {
 
           <Typography align="left" paragraph>
             Thanks for placing order &nbsp;
-            <Link href="#">Go to Billing to get your CD key</Link>
+            <Link href={PATH_PAGE.account}>Go to Billing to get your CD key</Link>
           </Typography>
 
           <Typography align="left" sx={{ color: 'text.secondary' }}>

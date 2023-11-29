@@ -27,7 +27,6 @@ export default function ResetPasswordForm({ onSent, onGetEmail }) {
 
   const methods = useForm({
     resolver: yupResolver(ResetPasswordSchema),
-    defaultValues: { email: 'demo@email.com' },
   });
 
   const {
@@ -37,7 +36,6 @@ export default function ResetPasswordForm({ onSent, onGetEmail }) {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       if (isMountedRef.current) {
         onSent();
         onGetEmail(data.email);

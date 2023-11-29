@@ -50,9 +50,7 @@ export default function LoginForm() {
 
   const onSubmit = async (data) => {
     try {
-      await login(data.email, data.password).then(
-        
-      );
+      await login(data.email, data.password)
     } catch (error) {
       console.error(error);
       reset();

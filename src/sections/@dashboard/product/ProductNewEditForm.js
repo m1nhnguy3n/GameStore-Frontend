@@ -11,9 +11,10 @@ import { LoadingButton } from '@mui/lab';
 import { Card, Grid, InputAdornment, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { sentenceCase } from 'change-case';
-
+// api 
+import { addProductApi, editProductApi } from '../../../api/product';
 // redux
-import { addProduct, updateProduct, getCategories, getPlatforms, getStockStatuses } from '../../../redux/slices/product';
+import {  getCategories, getPlatforms, getStockStatuses } from '../../../redux/slices/product';
 import { useDispatch, useSelector } from '../../../redux/store';
 
 // routes
@@ -23,38 +24,6 @@ import { FormProvider, RHFEditor, RHFSelect, RHFTextField, RHFUploadSingleFile }
 
 // ----------------------------------------------------------------------
 
-const CATEGORY_OPTION = [
-  {
-    id: 1,
-    categoryName: 'MMO',
-  },
-  {
-    id: 2,
-    categoryName: 'Action',
-  },
-];
-
-const STOCK_STATUS = [
-  {
-    id: 1,
-    statusName: 'in_stock',
-  },
-  {
-    id: 2,
-    statusName: 'out_of_stock',
-  },
-];
-
-const PLATFORM_OPTION = [
-  {
-    id: 1,
-    platformName: 'Steam',
-  },
-  {
-    id: 2,
-    platformName: 'Epic Games',
-  },
-];
 
 const LabelStyle = styled(Typography)(({ theme }) => ({
   ...theme.typography.subtitle2,
@@ -88,7 +57,6 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
   const NewProductSchema = Yup.object().shape({
     productName: Yup.string().required('Name is required'),
     description: Yup.string().required('Description is required'),
-    // images: Yup.array().min(1, 'Images is required'),
     price: Yup.number().moreThan(0, 'Price should not be $0.00'),
   });
 
@@ -99,7 +67,6 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
       description: currentProduct?.description || '',
       image: currentProduct?.image || '',
       price: currentProduct?.price || 0,
-      available: currentProduct?.available || 0,
       stockId: currentProduct?.stockId || stockStatuses[0]?.id,
       categoryId: currentProduct?.categoryId || categories[0]?.id,
       platformId: currentProduct?.publisherId || platforms[0]?.id,
@@ -144,19 +111,36 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
         handleAndAddProduct(data);
       }
       reset();
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
       navigate(PATH_DASHBOARD.product.list);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleAndAddProduct = (product) => {
-    dispatch(addProduct(product));
+  const handleAndAddProduct = async (product) => {
+    const formData = new FormData();
+    formData.append('image', product.image);
+    formData.append('data', JSON.stringify(product));
+    await addProductApi(formData)
+      .then(() => {
+        enqueueSnackbar('Create success!');
+      })
+      .catch(() => {
+        enqueueSnackbar('Create Failed!', { variant: 'error'});
+      });
   };
 
-  const handleAndUpdateData = (product) => {
-    dispatch(updateProduct(product));
+  const handleAndUpdateData = async (product) => {
+    const formData = new FormData();
+    formData.append('image', product.image);
+    formData.append('data', JSON.stringify(product));
+    await editProductApi(product.id, formData)
+      .then(() => {
+        enqueueSnackbar('Update success!');
+      })
+      .catch(() => {
+        enqueueSnackbar('Update Failed!', { variant: 'error' });
+      });
   };
 
   const handleDrop = useCallback(
@@ -200,7 +184,7 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
           <Stack spacing={3}>
             <Card sx={{ p: 3 }}>
               <RHFSelect name="stockId" label="Stock Status">
-                {STOCK_STATUS.map((stockStatus) => (
+                {stockStatuses.map((stockStatus) => (
                   <option key={stockStatus.id} value={Number(stockStatus.id)}>
                     {sentenceCase(stockStatus.statusName)}
                   </option>
@@ -209,14 +193,14 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
 
               <Stack spacing={3} mt={2}>
                 <RHFSelect name="categoryId" label="Category">
-                  {CATEGORY_OPTION.map((category) => (
+                  {categories.map((category) => (
                     <option key={category.id} value={Number(category.id)}>
                       {category.categoryName}
                     </option>
                   ))}
                 </RHFSelect>
                 <RHFSelect name="platformId" label="Platform">
-                  {PLATFORM_OPTION.map((platform) => (
+                  {platforms.map((platform) => (
                     <option key={platform.id} value={Number(platform.id)}>
                       {platform.platformName}
                     </option>
@@ -225,20 +209,6 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
               </Stack>
             </Card>
             <Card sx={{ p: 3 }}>
-              {/* <Stack spacing={3} mb={2}>
-                <RHFTextField
-                  name="available"
-                  label="Available"
-                  placeholder="0"
-                  value={getValues('available') === 0 ? '' : getValues('available')}
-                  onChange={(event) => setValue('available', Number(event.target.value))}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={{
-                    type: 'number',
-                  }}
-                />
-              </Stack> */}
-
               <Stack spacing={3} mb={2}>
                 <RHFTextField
                   name="price"

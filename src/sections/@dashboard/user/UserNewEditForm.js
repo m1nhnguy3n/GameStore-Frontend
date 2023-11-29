@@ -86,27 +86,41 @@ export default function UserNewEditForm({ isEdit, currentUser }) {
       } else {
         editUser(data);
       }
+
+      console.log(data)
       reset();
-      enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
       navigate(PATH_DASHBOARD.user.list);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const addUser = (user) => {
+  const addUser = async (user) => {
+    user.roles = [user.role]
     user.password = '123'
     const formData = new FormData();
     formData.append('avatar', user.avatarUrl);
     formData.append('data', JSON.stringify(user));
-    createUserApi(formData);
+    await createUserApi(formData)
+      .then((response) => {
+      enqueueSnackbar(response.message || 'Create success!');
+      }).catch((error) => {
+      enqueueSnackbar(error.message || 'Create Failed!', {variant: 'error'});  
+    });
   };
 
   const editUser = (user) => {
+    user.roles = [user.role];
     const formData = new FormData();
     formData.append('avatar', user.avatarUrl);
     formData.append('data', JSON.stringify(user));
-    editUserApi(user.id, formData);
+    editUserApi( formData)
+      .then((response) => {
+        enqueueSnackbar(response.message || 'Update success!');
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message || 'Update Failed!', { variant: 'error' });
+      });;
   };
 
   const handleDrop = useCallback(
@@ -130,14 +144,6 @@ export default function UserNewEditForm({ isEdit, currentUser }) {
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Card sx={{ py: 10, px: 3 }}>
-            {isEdit && (
-              <Label
-                color={values.status !== 'active' ? 'error' : 'success'}
-                sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
-              >
-                {values.status}
-              </Label>
-            )}
 
             <Box sx={{ mb: 5 }}>
               <RHFUploadAvatar

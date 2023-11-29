@@ -24,10 +24,9 @@ CollapsibleTableRow.propTypes = {
     id: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired,
     status: PropTypes.string.isRequired,
-    InvoiceDetail: PropTypes.arrayOf(
+    invoiceDetail: PropTypes.arrayOf(
       PropTypes.shape({
         amount: PropTypes.number.isRequired,
-        productId: PropTypes.number.isRequired,
         product: PropTypes.object.isRequired,
         price: PropTypes.number.isRequired,
         code: PropTypes.array.isRequired,
@@ -74,7 +73,7 @@ export default function CollapsibleTableRow(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.InvoiceDetail.map((historyRow, index) => (
+                  {row.invoiceDetail.map((historyRow, index) => (
                     <TableRow key={index}>
                       <TableCell component="th" scope="row">
                         {index + 1}

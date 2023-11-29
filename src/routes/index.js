@@ -123,7 +123,14 @@ export default function Router() {
       element: <MainLayout />,
       children: [
         { element: <HomePage />, index: true },
-        { path: 'account', element: <UserAccount /> },
+        {
+          path: 'account',
+          element: (
+            <AuthGuard>
+              <UserAccount />
+            </AuthGuard>
+          ),
+        },
         {
           path: 'product',
           children: [

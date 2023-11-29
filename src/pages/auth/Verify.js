@@ -9,11 +9,12 @@ import { styled } from '@mui/material/styles';
 import LogoOnlyLayout from '../../layouts/LogoOnlyLayout';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
+// api
+import { verifyEmailApi } from '../../api/auth';
 // components
 import Page from '../../components/Page';
 // sections
 import useQuery from '../../hooks/useQuery';
-import axios from '../../utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -33,11 +34,16 @@ export default function Verify() {
 
   const query = useQuery();
 
-  const handleToken = () => {
+  const handleToken = async () => {
     const token = query.get('token');
     if (token) {
-      axios.get(`/emailverify?token=${token}`);
-      enqueueSnackbar('Verify success!');
+      await verifyEmailApi(token)
+        .then(() => {
+          enqueueSnackbar('Verify success!');
+        })
+        .catch((response) => {
+          enqueueSnackbar(response.message || 'Verify failed! Please check email again', { variant: 'error' });
+        });
     } else {
       enqueueSnackbar('Verify failed! Please check email again', { variant: 'error' });
     }

@@ -8,9 +8,8 @@ import { LoadingButton } from '@mui/lab';
 import { Card, Stack } from '@mui/material';
 // components
 import { FormProvider, RHFTextField } from '../../../../components/hook-form';
-// axios
-import axios from '../../../../utils/axios';
-
+// api
+import { changePasswordApi } from '../../../../api/auth';
 //
 import useAuth from '../../../../hooks/useAuth';
 
@@ -45,14 +44,18 @@ export default function AccountChangePassword() {
     formState: { isSubmitting },
   } = methods;
 
-  const changePassword = (data) => {
-    const response = axios.post('/change-password', { ...data , userId: user.id});
-    enqueueSnackbar('Update success!' || response.statusText);
+  const changePassword = async (data) => {
+    await changePasswordApi(data, user.id)
+      .then((response) => {
+    enqueueSnackbar('Change Password Successfully!' || response.message);
+      }).catch((response) => {
+    enqueueSnackbar('Change Password Failed!' || response.message, {variant: 'error'});
+      })
   };
 
   const onSubmit = async (data) => {
     try {
-      changePassword(data);
+      await changePassword(data);
       reset();
     } catch (error) {
       console.error(error);

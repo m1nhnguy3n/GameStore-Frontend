@@ -54,6 +54,9 @@ export default function ProductDetailsSummary({ cart, product, onAddCart, onGoto
 
   const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
+  let isEmpty = false;
+
+  if (available === 0) isEmpty = true;
   const defaultValues = {
     id,
     productName,
@@ -150,7 +153,7 @@ export default function ProductDetailsSummary({ cart, product, onAddCart, onGoto
         <Stack direction="row" spacing={2} sx={{ mt: 5 }}>
           <Button
             fullWidth
-            disabled={isMaxQuantity}
+            disabled={isEmpty}
             size="large"
             color="warning"
             variant="contained"
@@ -161,7 +164,7 @@ export default function ProductDetailsSummary({ cart, product, onAddCart, onGoto
             Add to Cart
           </Button>
 
-          <Button disabled={isMaxQuantity} fullWidth size="large" type="submit" variant="contained">
+          <Button disabled={isEmpty} fullWidth size="large" type="submit" variant="contained">
             Buy Now
           </Button>
         </Stack>

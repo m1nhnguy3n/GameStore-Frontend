@@ -1,12 +1,12 @@
 // utils
 import axios from '../utils/axios';
 
-export function deleteProduct(id) {
+export function deleteProductApi(id) {
     return axios.delete(`/product/${id}`)
 }
 
-export function editProductApi(product) {
-    return axios.put(`/product/${product.id}`, product)
+export function editProductApi(productId, product) {
+    return axios.put(`/product/${productId}`, product);
 }
 export function addProductApi(product) {
   return axios.post(`/product`, product);

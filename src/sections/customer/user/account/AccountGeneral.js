@@ -9,9 +9,10 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography } from '@mui/material';
 // hooks
 import useAuth from '../../../../hooks/useAuth';
+// api
+import { editUserApi } from '../../../../api/user';
 // utils
 import { fData } from '../../../../utils/formatNumber';
-// _mock
 // components
 import { FormProvider, RHFTextField, RHFUploadAvatar } from '../../../../components/hook-form';
 
@@ -23,10 +24,12 @@ export default function AccountGeneral() {
   const { user } = useAuth();
 
   const UpdateUserSchema = Yup.object().shape({
-    displayName: Yup.string().required('Name is required'),
+    firstName: Yup.string().required('First Name is required'),
+    lastName: Yup.string().required('Last Name is required'),
   });
 
   const defaultValues = {
+    id: user?.id,
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     email: user?.email || '',
@@ -44,13 +47,26 @@ export default function AccountGeneral() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
+  const onSubmit = async (data) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
+      console.log(data);
+      await handleAndEditUser(data);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleAndEditUser = async (userData) => {
+    const formData = new FormData();
+   formData.append('avatar', userData.avatar);
+  formData.append('data', JSON.stringify(userData));
+    await editUserApi(formData)
+      .then(() => {
+        enqueueSnackbar('Update success!');
+      })
+      .catch(() => {
+        enqueueSnackbar('Update Failed!', { variant: 'error' });
+      });
   };
 
   const handleDrop = useCallback(

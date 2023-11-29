@@ -37,7 +37,6 @@ ProductDetailsReviewOverview.propTypes = {
 
 export default function ProductDetailsReviewOverview({ product, onOpen }) {
   const { totalRating, totalReview, rating } = product;
-  console.log(rating)
 
   const total = sumBy(rating, (star) => star.starCount);
 
@@ -48,7 +47,7 @@ export default function ProductDetailsReviewOverview({ product, onOpen }) {
           Average rating
         </Typography>
         <Typography variant="h2" gutterBottom sx={{ color: 'error.main' }}>
-          {fShortenNumber(totalRating)}/5
+          {totalRating}/5
         </Typography>
         <RatingStyle readOnly value={totalRating} precision={0.1} />
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>

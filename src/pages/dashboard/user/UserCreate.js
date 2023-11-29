@@ -29,7 +29,6 @@ export default function UserCreate() {
 
   const currentUser = users.find((user) => user.id === Number(userId));
 
-  console.log(userId);
 
   return (
     <Page title="User: Create a new user">

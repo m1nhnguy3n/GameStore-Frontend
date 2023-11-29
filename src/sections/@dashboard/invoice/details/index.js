@@ -21,8 +21,6 @@ import { fCurrency } from '../../../../utils/formatNumber';
 import Label from '../../../../components/Label';
 import Image from '../../../../components/Image';
 import Scrollbar from '../../../../components/Scrollbar';
-//
-import InvoiceToolbar from './InvoiceToolbar';
 
 // ----------------------------------------------------------------------
 
@@ -40,7 +38,7 @@ InvoiceDetails.propTypes = {
     id: PropTypes.number.isRequired,
     total: PropTypes.number.isRequired,
     status: PropTypes.string.isRequired,
-    InvoiceDetail: PropTypes.arrayOf(
+    invoiceDetail: PropTypes.arrayOf(
       PropTypes.shape({
         amount: PropTypes.number.isRequired,
         product: PropTypes.object.isRequired,
@@ -59,14 +57,10 @@ export default function InvoiceDetails({ invoice }) {
     return null;
   }
 
-  const { id, createdAt, InvoiceDetail, status, total } = invoice;
+  const { id, createdAt, invoiceDetail, status, total } = invoice;
 
-  console.log(InvoiceDetail);
-  
   return (
     <>
-      {/* <InvoiceToolbar invoice={invoice} /> */}
-
       <Card sx={{ pt: 5, px: 5 }}>
         <Grid container>
           <Grid item xs={12} sm={6} sx={{ mb: 5 }}>
@@ -125,7 +119,7 @@ export default function InvoiceDetails({ invoice }) {
               </TableHead>
 
               <TableBody>
-                {InvoiceDetail.map((row, index) => (
+                {invoiceDetail.map((row, index) => (
                   <TableRow
                     key={index}
                     sx={{

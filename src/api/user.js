@@ -1,7 +1,7 @@
 // utils
 import axios from '../utils/axios';
 
-export function editUserApi(userId, user) {
+export function editUserApi(user) {
   return axios.put('/user/update-user/', user);
 }
 

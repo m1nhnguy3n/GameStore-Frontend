@@ -6,6 +6,9 @@ import { alpha, styled } from '@mui/material/styles';
 import { Backdrop, Divider, Typography, Stack, FormControlLabel, Radio } from '@mui/material';
 // hooks
 import useSettings from '../../hooks/useSettings';
+// guards
+import RoleBasedGuard from '../../guards/RoleBasedGuard';
+
 // utils
 import cssStyles from '../../utils/cssStyles';
 // config
@@ -117,7 +120,7 @@ export default function Settings() {
 
               <Scrollbar sx={{ flexGrow: 1 }}>
                 <Stack spacing={3} sx={{ p: 3 }}>
-                  <Stack spacing={1.5}>
+                  <Stack disable spacing={1.5}>
                     <Typography variant="subtitle2">Mode</Typography>
                     <SettingMode />
                   </Stack>
@@ -129,7 +132,7 @@ export default function Settings() {
 
                   <Stack spacing={1.5}>
                     <Typography variant="subtitle2">Layout</Typography>
-                    <SettingLayout />
+                    <SettingLayout disable/>
                   </Stack>
 
                   <Stack spacing={1.5}>

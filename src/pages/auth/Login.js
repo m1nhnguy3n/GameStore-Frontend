@@ -5,7 +5,6 @@ import { styled } from '@mui/material/styles';
 // routes
 import { PATH_AUTH } from '../../routes/paths';
 // hooks
-import useAuth from '../../hooks/useAuth';
 import useResponsive from '../../hooks/useResponsive';
 // components
 import Image from '../../components/Image';
@@ -63,8 +62,6 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Login() {
-  const { method } = useAuth();
-
   const smUp = useResponsive('up', 'sm');
 
   const mdUp = useResponsive('up', 'md');
@@ -93,9 +90,7 @@ export default function Login() {
           </SectionStyle>
         )}
 
-        <Container
-        // maxWidth="sm"
-        >
+        <Container >
           <ContentStyle>
             <Stack direction="row" alignItems="center" sx={{ mb: 5 }}>
               <Box sx={{ flexGrow: 1 }}>
@@ -104,21 +99,7 @@ export default function Login() {
                 </Typography>
                 <Typography sx={{ color: 'text.secondary' }}>Enter your details below.</Typography>
               </Box>
-
-              {/* <Tooltip title={capitalCase(method)} placement="right">
-                <>
-                  <Image
-                    disabledEffect
-                    src={`https://minimal-assets-api.vercel.app/assets/icons/auth/ic_${method}.png`}
-                    sx={{ width: 32, height: 32 }}
-                  />
-                </>
-              </Tooltip> */}
             </Stack>
-
-            {/* <Alert severity="info" sx={{ mb: 3 }}>
-              Use email : <strong>admin@store.com</strong> / password :<strong> 123</strong>
-            </Alert> */}
 
             <LoginForm />
 

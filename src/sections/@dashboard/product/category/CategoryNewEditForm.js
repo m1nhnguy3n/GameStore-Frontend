@@ -12,7 +12,7 @@ import { Card, Stack } from '@mui/material';
 // components
 import { FormProvider, RHFTextField } from '../../../../components/hook-form';
 
-// api 
+// api
 import { addCategoryApi, editCategoryApi } from '../../../../api/category';
 // ----------------------------------------------------------------------
 
@@ -48,7 +48,6 @@ export default function CategoryNewEditForm({ isEdit, category }) {
     formState: { isSubmitting },
   } = methods;
 
-  
   watch();
 
   useEffect(() => {
@@ -61,44 +60,49 @@ export default function CategoryNewEditForm({ isEdit, category }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, category]);
   const addCategory = async (category) => {
- await addCategoryApi(category).then((response) => {
-      enqueueSnackbar('Create success!' || response.statusText);
-    });
-    
+    await addCategoryApi(category)
+      .then((response) => {
+        enqueueSnackbar(response.message || 'Create success!');
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message || 'Create Failed!', { variant: 'error' });
+      });
   };
 
   const editCategory = async (category) => {
-    await editCategoryApi(category).then((response) => {
-     enqueueSnackbar('Update success!' || response.statusText);
-   });
-    
+    await editCategoryApi(category)
+      .then((response) => {
+        enqueueSnackbar( response.message || 'Update success!' );
+      })
+      .catch((error) => {
+        enqueueSnackbar(error.message || 'Create Failed!', { variant: 'error' });
+      });
   };
 
-    const onSubmit = async (data) => {
-      try {
-        if (!isEdit) {
-        addCategory(data);
-        } else {
-          editCategory(data);
-        }
-        reset();
-      } catch (error) {
-        console.error(error);
+  const onSubmit = async (data) => {
+    try {
+      if (!isEdit) {
+       await addCategory(data);
+      } else {
+        await editCategory(data);
       }
-    };
+      reset();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    return (
-      <Card sx={{ p: 3 }}>
-        <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={3} alignItems="flex-end">
-            <RHFTextField name="categoryName" label="Category Name" />
+  return (
+    <Card sx={{ p: 3 }}>
+      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <Stack spacing={3} alignItems="flex-end">
+          <RHFTextField name="categoryName" label="Category Name" />
 
-            <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-              Save Changes
-            </LoadingButton>
-          </Stack>
-        </FormProvider>
-      </Card>
-    );
-  
+          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+            Save Changes
+          </LoadingButton>
+        </Stack>
+      </FormProvider>
+    </Card>
+  );
 }

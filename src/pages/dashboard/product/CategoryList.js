@@ -1,7 +1,5 @@
 import { useSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
-import * as Yup from 'yup';
-// form
 // @mui
 import {
   Box,
@@ -40,9 +38,13 @@ import {
 } from '../../../components/table';
 
 // sections
-import { CategoryNewEditForm, CategoryTableRow, CategoryTableToolbar } from '../../../sections/@dashboard/product/category';
+import {
+  CategoryNewEditForm,
+  CategoryTableRow,
+  CategoryTableToolbar,
+} from '../../../sections/@dashboard/product/category';
 
-// api 
+// api
 import { deleteCategoryApi } from '../../../api/category';
 
 // ----------------------------------------------------------------------
@@ -107,12 +109,13 @@ export default function CategoryList() {
     const deleteRow = tableData.filter((row) => row.id !== id);
     setSelected([]);
     setTableData(deleteRow);
-    await deleteCategoryApi(id).then(() => {
-      enqueueSnackbar('Delete success!');
-    }).catch(() => {
-      enqueueSnackbar('Delete failed!', { variant: 'error' });
-      
-    });
+    await deleteCategoryApi(id)
+      .then(() => {
+        enqueueSnackbar('Delete success!');
+      })
+      .catch(() => {
+        enqueueSnackbar('Delete failed!', { variant: 'error' });
+      });
   };
 
   const handleDeleteRows = (selected) => {

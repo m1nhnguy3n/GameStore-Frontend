@@ -9,7 +9,7 @@ export function editCategoryApi(category) {
     return axios.put(`/category/${category.id}`, { ...category });
 }
 export function deleteCategoryApi(id) {
-  return axios.put(`/category/${id}`);
+  return axios.delete(`/category/${id}`);
 }
 
 export function getCategoriesApi() {

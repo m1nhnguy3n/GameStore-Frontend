@@ -3,20 +3,11 @@ import sum from 'lodash/sum';
 import uniqBy from 'lodash/uniqBy';
 // api
 import { getCategoriesApi } from '../../api/category';
-import { getPlatformsApi } from '../../api/platform';
-import {
-  addProductApi,
-  editProductApi,
-  getProductsApi,
-  getStockStatusesApi,
-  searchProductByNameApi,
-} from '../../api/product';
 import { getCdkeyApi } from '../../api/cdkey';
+import { getPlatformsApi } from '../../api/platform';
+import { getProductsApi, getStockStatusesApi, searchProductByNameApi } from '../../api/product';
 //
 import { dispatch } from '../store';
-
-
-
 
 // ----------------------------------------------------------------------
 
@@ -246,41 +237,6 @@ export function getProduct(name) {
     try {
       const response = await searchProductByNameApi(name);
       dispatch(slice.actions.getProductSuccess(response.data));
-    } catch (error) {
-      console.error(error);
-      dispatch(slice.actions.hasError(error));
-    }
-  };
-}
-
-export function updateProduct(product) {
-  return async () => {
-    dispatch(slice.actions.startLoading());
-    try {
-      const formData = new FormData();
-      formData.append('image', product.image);
-      formData.append('data', JSON.stringify(product));
-
-      await editProductApi(product);
-    } catch (error) {
-      console.error(error);
-      dispatch(slice.actions.hasError(error));
-    }
-  };
-}
-
-export function addProduct(product) {
-  return async () => {
-    dispatch(slice.actions.startLoading());
-    try {
-
-      const formData = new FormData();
-      formData.append('image', product.image)
-      formData.append('data', JSON.stringify(product));
-
-      // await axios.post('/file/upload-image', formData);
-
-      await addProductApi(formData);
     } catch (error) {
       console.error(error);
       dispatch(slice.actions.hasError(error));

@@ -1,7 +1,7 @@
 import { m } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
-import { Box, Button, Container, Stack, Typography ,Grid} from '@mui/material';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // routes
 import { PATH_PAGE } from '../../routes/paths';
@@ -69,11 +69,7 @@ export default function HomeHero() {
   return (
     <MotionContainer>
       <RootStyle>
-        <HeroOverlayStyle
-          alt="overlay"
-          src="/icons/overlay_4.jpg"
-          variants={varFade().in}
-        />
+        <HeroOverlayStyle alt="overlay" src="/icons/overlay_4.jpg" variants={varFade().in} />
         <HeroImgStyle alt="hero" src="/icons/game-console1.png" variants={varFade().inUp} />
 
         <Container>
@@ -90,8 +86,7 @@ export default function HomeHero() {
 
             <m.div variants={varFade().inRight}>
               <Typography sx={{ color: 'common.white' }}>
-                The starting point for your next project based on easy-to-customize MUI helps you build apps faster and
-                better.
+                Copyrighted game key CD distribution platform for gamers
               </Typography>
             </m.div>
 

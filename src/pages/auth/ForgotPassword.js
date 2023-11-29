@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+
 // @mui
 import { Box, Button, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -33,8 +35,11 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
 
-  const sendResetPasswordEmail = (email) => {
-    sendMailResetPasswordApi(email);
+  const { enqueueSnackbar } = useSnackbar();
+
+
+  const sendResetPasswordEmail = async (email) => {
+    await sendMailResetPasswordApi(email).then(enqueueSnackbar('Sent confirmation email successfully ')).catch(() => {enqueueSnackbar('Sent confirmation email successfully ');});
   };
 
   return (

@@ -77,12 +77,10 @@ export default function PaymentNewCardForm() {
   };
 
   const paymentAndCreateInvoice = async () => {
-    // const paymentStatus = await attachCardAndCharge();
-    // if (paymentStatus) {
-    //   handleNextStep();
-    // }
-      await createInvoice();
-
+  await charge();
+    await createInvoice();
+   handleNextStep();
+    
   }
   
   const createInvoice = async () => {
@@ -96,7 +94,7 @@ export default function PaymentNewCardForm() {
     await createInvoiceApi(invoice);
   }
 
-  const Charge = async () => {
+  const charge = async () => {
     const paymentMethodId = await getPaymentMethodId();
 
     let paymentSuccess = false
@@ -105,7 +103,7 @@ export default function PaymentNewCardForm() {
       return;
     }
 
-    const chargeResponse = await chargeApi(paymentMethodId, user.stripeCustomerId, total).then(() => {
+     await chargeApi(paymentMethodId, user.stripeCustomerId, total).then(() => {
       enqueueSnackbar('Payment Success');
     paymentSuccess = true;
 
@@ -113,13 +111,6 @@ export default function PaymentNewCardForm() {
       enqueueSnackbar('Payment Success', {variant: 'error'});
     });
 
-    console.log(chargeResponse)
-
-    if (chargeResponse.data.status !== 'succeeded') {
-      const secret = chargeResponse.data.client_secret;
-
-      await stripe?.confirmCardPayment(secret);
-    }
 
     return paymentSuccess;
   };
